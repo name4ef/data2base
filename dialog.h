@@ -17,6 +17,9 @@ public:
 
 private:
     Ui::Dialog *ui;
+
+private slots:
+    void connectToDb();
 };
 
 #endif // DIALOG_H
