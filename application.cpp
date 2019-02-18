@@ -28,7 +28,7 @@ Application::Application(int &argc, char **&argv, const QString filename) :
     pConfig = new Config(configPath, QSettings::IniFormat);
 }
 
-Application *Application::theApp()
+Application *Application::App()
 {
     return (Application*)qApp;
 }

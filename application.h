@@ -3,8 +3,8 @@
 
 #include <QApplication>
 #include <QDir>
-#include "config.h"
 #include <QDebug>
+#include "config.h"
 
 class Application : public QApplication
 {
@@ -15,7 +15,7 @@ private:
 public:
     Application(int& argc, char**& argv, const QString filename = "config.ini");
 
-    static Application* theApp();
+    static Application* App();
 
     Config* config();
 };

@@ -26,14 +26,16 @@ SOURCES += \
     main.cpp \
     dialog.cpp \
     config.cpp \
-    database.cpp \
-    application.cpp
+    application.cpp \
+    data.cpp \
+    base.cpp
 
 HEADERS += \
     dialog.h \
     config.h \
-    database.h \
-    application.h
+    application.h \
+    data.h \
+    base.h
 
 FORMS += \
     dialog.ui
