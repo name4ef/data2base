@@ -1,6 +1,6 @@
 #include "base.h"
 
-void Base::run()
+bool Base::connect()
 {
     Config* conf = Application::App()->config();
 
@@ -11,28 +11,44 @@ void Base::run()
     db.setPassword(conf->get("password"));
     if (!db.open()) {
         qDebug() << db.lastError();
-        status("can't connect to dbms");
+        return false;
     } else {
-        status("connected to dbms");
-        connected();
+        return true;
     }
 }
 
-void Base::prepareBase(QString name, QStringList headers)
+bool Base::insertRow(QString values)
+{
+    if (db.isOpen()) {
+        QSqlQuery query;
+        QString str = "INSERT INTO " + table  + " VALUES (" + values + ");";
+        if (query.exec(str)) {
+            return true;
+        } else {
+            qDebug() << query.lastError();
+            qDebug() << db.lastError();
+            return false;
+        }
+    }
+}
+
+bool Base::prepareBase(QString name, QStringList headers)
 {
     if (db.open()) {
         QSqlQuery query;
         QString str;
-        name = name.toLower();
+        table = name.toLower();
 
-        if (db.tables().contains(name)) {
+        if (db.tables().contains(table)) {
             qDebug() << "table exists";
-            str = "DROP TABLE " + name;
+            str = "DROP TABLE " + table;
+            qDebug() << str;
             if (query.exec(str)) {
                 qDebug() << "table removed";
             } else {
                 qDebug() << query.lastError();
                 qDebug() << db.lastError();
+                return false;
             }
         }
 
@@ -45,11 +61,10 @@ void Base::prepareBase(QString name, QStringList headers)
         }
         schema += ")";
 
-        str = "CREATE TABLE " + name + " " + schema + ";";
+        str = "CREATE TABLE " + table + " " + schema + ";";
         if (query.exec(str)) {
             qDebug() << "table created";
-            emit status("ready");
-            emit ready();
+            return true;
         }
     }
 }

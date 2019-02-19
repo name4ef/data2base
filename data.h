@@ -5,21 +5,25 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
+#include <QDebug>
 
-class Data : public QThread
+#include "application.h"
+
+class Data : public QObject
 {
     Q_OBJECT
 public:
-    void run();
+    Data(QString);
+    ~Data();
+    QString getFileName();
+    QStringList getFirstLine();
+    QString getLine();
 
 private:
     QString path;
     QFile file;
     QTextStream stream;
-
-public slots:
-    void getFirstLine(QString);
-    void getLine();
+    int delay;
 
 signals:
     void firstLine(QString);

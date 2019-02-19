@@ -28,14 +28,16 @@ SOURCES += \
     config.cpp \
     application.cpp \
     data.cpp \
-    base.cpp
+    base.cpp \
+    worker.cpp
 
 HEADERS += \
     dialog.h \
     config.h \
     application.h \
     data.h \
-    base.h
+    base.h \
+    worker.h
 
 FORMS += \
     dialog.ui

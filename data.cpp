@@ -1,11 +1,25 @@
 #include "data.h"
 
-void Data::run()
+Data::Data(QString filepath)
 {
-
+    Config* conf = Application::App()->config();
+    delay = conf->get("delay").toInt();
+    path = filepath;
 }
 
-void Data::getFirstLine(QString path)
+Data::~Data()
+{
+    if (file.isOpen()) {
+        file.close();
+    }
+}
+
+QString Data::getFileName()
+{
+    return QFileInfo(path).baseName();
+}
+
+QStringList Data::getFirstLine()
 {
     if (file.isOpen()) {
         file.close();
@@ -18,13 +32,17 @@ void Data::getFirstLine(QString path)
     if (!stream.atEnd()) {
         QString name = QFileInfo(path).baseName();
         QStringList line = stream.readLine().split(",");
-        emit waitBase(name, line);
-    } else {
-        emit fileEnded();
+        line.append("Calc_zond1");
+        line.append("Calc_zond2");
+        return line;
     }
 }
 
-void Data::getLine()
-{
 
+QString Data::getLine()
+{
+    if (!stream.atEnd()) {
+        QThread::usleep(delay);
+        return stream.readLine();
+    }
 }

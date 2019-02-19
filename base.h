@@ -4,28 +4,26 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QDebug>
-#include <QThread>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QLatin1String>
+
 #include "application.h"
 
-class Base : public QThread
+class Base : QObject
 {
     Q_OBJECT
 public:
-    void run();
+    explicit Base(QObject *parent = nullptr) :
+        QObject(parent)
+    {}
+    bool connect();
+    bool prepareBase(QString, QStringList);
+    bool insertRow(QString);
 
 private:
    QSqlDatabase db;
-
-public slots:
-    void prepareBase(QString, QStringList);
-
-signals:
-    void status(QString);
-    void connected();
-    void ready();
+   QString table;
 };
 
 #endif // DATABASE_H

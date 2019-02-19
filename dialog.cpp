@@ -3,7 +3,9 @@
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog),
-    filePath("")
+    filePath(""),
+    countOfRead(0),
+    countOfWrite(0)
 {
     ui->setupUi(this);
     ui->status->setText("connecting to dbms...");
@@ -11,46 +13,44 @@ Dialog::Dialog(QWidget *parent) :
     ui->pauseButton->setDisabled(true);
     ui->stopButton->setDisabled(true);
 
-    QObject::connect(ui->startButton, SIGNAL(clicked()), this, SLOT(start()));
-    QObject::connect(ui->browseButton, SIGNAL(clicked()), this, SLOT(browse()));
+    worker = new Worker();
+    thread = new QThread(this);
+    worker->moveToThread(thread);
+    thread->start();
+
+    connect(worker, SIGNAL(valueChange(int)), ui->lcdNumber, SLOT(display(int)));
+    connect(worker, SIGNAL(finished()), this, SLOT(close()));
+    connect(worker, SIGNAL(connected()), this, SLOT(setConnected()));
+    connect(worker, SIGNAL(ready()), this, SLOT(setReady()));
+    connect(worker, SIGNAL(readed()), this, SLOT(upperRead()));
+    connect(worker, SIGNAL(writed()), this, SLOT(upperWrite()));
+
+    connect(thread, SIGNAL(started()), worker, SLOT(slotDoWork()));
+    connect(thread, SIGNAL(started()), worker, SLOT(slotMakeConnection()));
+
+    connect(this, SIGNAL(needBase(QString)), worker, SLOT(slotPrepareBase(QString)));
+    connect(this, SIGNAL(run()), worker, SLOT(slotRun()));
+
+    connect(ui->startButton, SIGNAL(clicked()), this, SLOT(start()));
+    connect(ui->browseButton, SIGNAL(clicked()), this, SLOT(browse()));
 }
 
 Dialog::~Dialog()
 {
+    thread->quit();
+    thread->wait();
+    delete worker;
     delete ui;
 }
 
 void Dialog::checkForStart()
 {
-    if (connected && selected && ready) {
+    if (connected && selected && baseReady) {
         ui->startButton->setEnabled(true);
     } else if (connected && selected) {
         ui->status->setText("preparing database...");
-        emit getFirstLine(filePath);
-    }
-}
-
-void Dialog::start()
-{
-    qDebug() << "clicked to start button...";
-    if (filePath != "") {
-        qDebug() << "selected file: " + filePath;
-        QFile file(filePath);
-        if (file.exists()) {
-            if (!file.open(QIODevice::ReadOnly)) {
-                qWarning() << "can't read file: " + filePath;
-            }
-            QTextStream stream(&file);
-            for (int i = 0; i < 10; ++i) {
-                if (!stream.atEnd()) {
-                    qDebug() << stream.readLine();
-                }
-            }
-            file.close();
-            if (stream.status() != QTextStream::Ok) {
-                qWarning() << "error of reading file";
-            }
-        }
+        //emit getFirstLine(filePath);
+        emit needBase(filePath);
     }
 }
 
@@ -65,6 +65,11 @@ void Dialog::browse()
     }
 }
 
+void Dialog::start()
+{
+    emit run();
+}
+
 void Dialog::setStatus(QString str)
 {
     ui->status->setText(str);
@@ -73,11 +78,22 @@ void Dialog::setStatus(QString str)
 void Dialog::setConnected()
 {
     connected = true;
+    ui->status->setText("connected");
     checkForStart();
 }
 
 void Dialog::setReady()
 {
-    ready = true;
+    baseReady = true;
     checkForStart();
+}
+
+void Dialog::upperWrite()
+{
+    ui->writedValue->setNum(++countOfWrite);
+}
+
+void Dialog::upperRead()
+{
+    ui->readedValue->setNum(++countOfRead);
 }

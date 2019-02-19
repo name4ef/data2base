@@ -4,8 +4,10 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QDialog>
+#include <QThread>
+
 #include "ui_dialog.h"
-#include "base.h"
+#include "worker.h"
 
 namespace Ui {
 class Dialog;
@@ -24,7 +26,11 @@ private:
     QString filePath;
     bool connected = false;
     bool selected = false;
-    bool ready = false;
+    bool baseReady = false;
+    int countOfRead;
+    int countOfWrite;
+    QThread *thread;
+    Worker *worker;
     void checkForStart();
 
 public slots:
@@ -33,11 +39,16 @@ public slots:
     void setReady();
 
 private slots:
-    void start();
     void browse();
+    void start();
+    void upperWrite();
+    void upperRead();
 
 signals:
     void getFirstLine(QString);
+    void getLine();
+    void needBase(QString);
+    void run();
 };
 
 #endif // DIALOG_H
