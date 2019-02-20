@@ -19,7 +19,7 @@ QString Data::getFileName()
     return QFileInfo(path).baseName();
 }
 
-QStringList Data::getFirstLine()
+QString Data::getFirstLine()
 {
     if (file.isOpen()) {
         file.close();
@@ -29,13 +29,11 @@ QStringList Data::getFirstLine()
     file.open(QIODevice::ReadOnly);
     stream.setDevice(&file);
 
+    QString s;
     if (!stream.atEnd()) {
-        QString name = QFileInfo(path).baseName();
-        QStringList line = stream.readLine().split(",");
-        line.append("Calc_zond1");
-        line.append("Calc_zond2");
-        return line;
+        s = stream.readLine();
     }
+    return s;
 }
 
 
@@ -44,5 +42,7 @@ QString Data::getLine()
     if (!stream.atEnd()) {
         QThread::usleep(delay);
         return stream.readLine();
+    } else {
+        return "";
     }
 }

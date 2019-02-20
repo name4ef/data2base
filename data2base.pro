@@ -29,7 +29,8 @@ SOURCES += \
     application.cpp \
     data.cpp \
     base.cpp \
-    worker.cpp
+    worker.cpp \
+    calculator.cpp
 
 HEADERS += \
     dialog.h \
@@ -37,7 +38,8 @@ HEADERS += \
     application.h \
     data.h \
     base.h \
-    worker.h
+    worker.h \
+    calculator.h
 
 FORMS += \
     dialog.ui

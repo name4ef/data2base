@@ -16,7 +16,7 @@ public:
     Data(QString);
     ~Data();
     QString getFileName();
-    QStringList getFirstLine();
+    QString getFirstLine();
     QString getLine();
 
 private:

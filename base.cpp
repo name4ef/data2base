@@ -42,7 +42,6 @@ bool Base::prepareBase(QString name, QStringList headers)
         if (db.tables().contains(table)) {
             qDebug() << "table exists";
             str = "DROP TABLE " + table;
-            qDebug() << str;
             if (query.exec(str)) {
                 qDebug() << "table removed";
             } else {

@@ -1,31 +1,36 @@
 #include "worker.h"
 
 Worker::Worker(QObject *parent) :
-    QObject(parent),
-    n(0)
-{
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(setNextValue()));
-}
+    QObject(parent)
+{}
 
 Worker::~Worker()
 {
     delete data;
     delete base;
+    delete calc;
 }
 
 void Worker::slotMakeConnection()
 {
     base = new Base();
+    emit status("connecting to dbms...");
     if (base->connect()) {
         emit connected();
+    } else {
+        emit status("can't connect to dbms");
     }
 }
 
 void Worker::slotPrepareBase(QString path)
 {
     data = new Data(path);
-    bool prepared = base->prepareBase(data->getFileName(), data->getFirstLine());
+    QString header = data->getFirstLine();
+    QStringList headers = header.split(",");
+    calc = new Calculator(headers.count());
+    headers.append("Calc_zond1");
+    headers.append("Calc_zond2");
+    bool prepared = base->prepareBase(data->getFileName(), headers);
     if (prepared) {
         emit ready();
     }
@@ -33,9 +38,11 @@ void Worker::slotPrepareBase(QString path)
 
 void Worker::slotRun()
 {
-    for (;;) {
+    for (int i; i < 100; ++i) {
         QString line = data->getLine();
-        if (line.length() > 0) { // TODO check for valid
+        calc->input(line);
+        line = calc->run();
+        if (line.length() > 0) {
             emit readed();
             if (base->insertRow(line)) {
                 emit writed();
@@ -47,19 +54,5 @@ void Worker::slotRun()
             qDebug() << "Error of read. Readed line: " + line;
             break;
         }
-    }
-}
-
-void Worker::slotDoWork()
-{
-    timer->start(50);
-}
-
-void Worker::setNextValue()
-{
-    emit valueChange(++n);
-    if (n > 3600) {
-        timer->stop();
-        emit finished();
     }
 }
