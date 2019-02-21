@@ -33,7 +33,7 @@ void Worker::slNeedBase(QString p)
 void Worker::slStart()
 {
     run = true;
-    for (int i; run; ++i) { //FIXME run only //TOOD check with small file
+    for (int i = 0; run; ++i) {
         QString line = data->getLine();
         if (line.length() > 0) {
             calc->input(line);
