@@ -46,7 +46,7 @@ Dialog::Dialog(QWidget *parent) :
 
 Dialog::~Dialog()
 {
-    emit siStop();
+    emit siPause();
     thread->quit();
     qDebug() << "waiting thread";
     thread->wait();
@@ -96,7 +96,7 @@ void Dialog::_slStart()
         emit siPause();
     } else {
         run = true;
-        ui->startPauseButton->setText("pause");
+        ui->startPauseButton->setText("stop");
         emit siStart();
     }
     ui->browseButton->setDisabled(true);
