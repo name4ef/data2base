@@ -1,51 +1,46 @@
 #include "worker.h"
 
 Worker::Worker(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    run(false)
 {}
 
-Worker::~Worker()
-{
-    delete data;
-    delete base;
-    delete calc;
-}
-
-void Worker::slotMakeConnection()
+void Worker::slMakeConnection()
 {
     base = new Base();
-    emit status("connecting to dbms...");
+    emit siStatus("connecting to dbms...");
     if (base->connect()) {
-        emit connected();
+        emit siConnected();
     } else {
-        emit status("can't connect to dbms");
+        emit siStatus("can't connect to dbms");
     }
 }
 
-void Worker::slotPrepareBase(QString path)
+void Worker::slNeedBase(QString p)
 {
+    path = p;
     data = new Data(path);
     QString header = data->getFirstLine();
     QStringList headers = header.split(",");
     calc = new Calculator(headers.count());
     headers.append("Calc_zond1");
     headers.append("Calc_zond2");
-    bool prepared = base->prepareBase(data->getFileName(), headers);
-    if (prepared) {
-        emit ready();
+    if (base->prepareBase(data->getFileName(), headers)) {
+        emit siReady();
     }
 }
 
-void Worker::slotRun()
+void Worker::slStart()
 {
-    for (int i; i < 100; ++i) {
+    run = true;
+    for (int i; run; ++i) { //FIXME run only //TOOD check with small file
         QString line = data->getLine();
-        calc->input(line);
-        line = calc->run();
         if (line.length() > 0) {
-            emit readed();
+            calc->input(line);
+            line = calc->run();
+            emit siReaded();
             if (base->insertRow(line)) {
-                emit writed();
+                emit siWrited();
             } else {
                 qDebug() << "Error of write";
                 break;
@@ -54,5 +49,21 @@ void Worker::slotRun()
             qDebug() << "Error of read. Readed line: " + line;
             break;
         }
+        if (i%1000 == 0 && i != 0) {
+            emit siTime();
+        }
+        QCoreApplication::processEvents();
     }
+}
+
+void Worker::slPause()
+{
+    run = false;
+}
+
+void Worker::slStop()
+{
+    slNeedBase(path);
+    run = false;
+    emit siReset();
 }

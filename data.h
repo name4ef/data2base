@@ -14,7 +14,6 @@ class Data : public QObject
     Q_OBJECT
 public:
     Data(QString);
-    ~Data();
     QString getFileName();
     QString getFirstLine();
     QString getLine();

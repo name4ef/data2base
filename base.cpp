@@ -24,26 +24,25 @@ bool Base::insertRow(QString values)
         QString str = "INSERT INTO " + table  + " VALUES (" + values + ");";
         if (query.exec(str)) {
             return true;
-        } else {
-            qDebug() << query.lastError();
-            qDebug() << db.lastError();
-            return false;
         }
+        qDebug() << query.lastError();
+        qDebug() << db.lastError();
     }
+    return false;
 }
 
 bool Base::prepareBase(QString name, QStringList headers)
 {
-    if (db.open()) {
+    if (db.isOpen()) {
         QSqlQuery query;
         QString str;
         table = name.toLower();
 
         if (db.tables().contains(table)) {
-            qDebug() << "table exists";
+            qDebug() << "table" << table << "exists";
             str = "DROP TABLE " + table;
             if (query.exec(str)) {
-                qDebug() << "table removed";
+                qDebug() << "table" << table << "removed";
             } else {
                 qDebug() << query.lastError();
                 qDebug() << db.lastError();
@@ -62,8 +61,17 @@ bool Base::prepareBase(QString name, QStringList headers)
 
         str = "CREATE TABLE " + table + " " + schema + ";";
         if (query.exec(str)) {
-            qDebug() << "table created";
+            qDebug() << "table" << table << "created";
             return true;
         }
     }
+    return false;
+}
+
+bool Base::disconnect()
+{
+    if (db.isOpen()) {
+        db.close();
+    }
+    return true;
 }

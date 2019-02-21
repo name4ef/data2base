@@ -20,6 +20,7 @@ public:
     bool connect();
     bool prepareBase(QString, QStringList);
     bool insertRow(QString);
+    bool disconnect();
 
 private:
    QSqlDatabase db;

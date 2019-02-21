@@ -2,6 +2,7 @@
 #define WORKER_H
 
 #include <QObject>
+#include <QEventLoop>
 
 #include "base.h"
 #include "data.h"
@@ -14,22 +15,27 @@ private:
     Base* base;
     Data* data;
     Calculator* calc;
+    bool run;
+    QString path;
 
 public:
     Worker(QObject *parent = nullptr);
-    ~Worker();
 
 signals:
-    void connected();
-    void status(QString);
-    void ready();
-    void readed();
-    void writed();
+    void siConnected();
+    void siStatus(QString);
+    void siReady();
+    void siReaded();
+    void siWrited();
+    void siTime();
+    void siReset();
 
 public slots:
-    void slotMakeConnection();
-    void slotPrepareBase(QString);
-    void slotRun();
+    void slMakeConnection();
+    void slNeedBase(QString);
+    void slStart();
+    void slPause();
+    void slStop();
 };
 
 #endif // WORKER_H

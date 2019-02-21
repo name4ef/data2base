@@ -3,15 +3,8 @@
 Data::Data(QString filepath)
 {
     Config* conf = Application::App()->config();
-    delay = conf->get("delay").toInt();
+    delay = conf->get("delay").toInt() * 1000;
     path = filepath;
-}
-
-Data::~Data()
-{
-    if (file.isOpen()) {
-        file.close();
-    }
 }
 
 QString Data::getFileName()

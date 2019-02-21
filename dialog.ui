@@ -85,23 +85,16 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="startButton">
+        <widget class="QPushButton" name="startPauseButton">
          <property name="text">
           <string>start</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pauseButton">
-         <property name="text">
-          <string>pause</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="stopButton">
          <property name="text">
-          <string>stop</string>
+          <string>reset</string>
          </property>
         </widget>
        </item>
@@ -119,6 +112,13 @@
         </spacer>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <layout class="QVBoxLayout" name="values">
@@ -245,6 +245,13 @@
           <widget class="QLabel" name="deltaTimeValue">
            <property name="text">
             <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>ms</string>
            </property>
           </widget>
          </item>

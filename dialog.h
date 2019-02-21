@@ -5,6 +5,8 @@
 #include <QFileDialog>
 #include <QDialog>
 #include <QThread>
+#include <QDateTime>
+#include <QStack>
 
 #include "ui_dialog.h"
 #include "worker.h"
@@ -24,31 +26,37 @@ public:
 private:
     Ui::Dialog *ui;
     QString filePath;
-    bool connected = false;
-    bool selected = false;
-    bool baseReady = false;
+    bool connected;
+    bool selected;
+    bool baseReady;
+    bool run;
     int countOfRead;
     int countOfWrite;
+    int delay;
     QThread *thread;
     Worker *worker;
+    qint64 lastTime;
+    QStack<qint64> deltaTime;
     void checkForStart();
-
-public slots:
-    void setStatus(QString);
-    void setConnected();
-    void setReady();
+    unsigned int getDeltaTime(QStack<qint64>*);
 
 private slots:
-    void browse();
-    void start();
-    void upperWrite();
-    void upperRead();
+    void _slBrowse();
+    void _slStart();
+    void _slStop();
+    void _slWrited();
+    void _slReaded();
+    void _slTime();
+    void _slStatus(QString);
+    void _slConnected();
+    void _slReady();
+    void _slReset();
 
 signals:
-    void getFirstLine(QString);
-    void getLine();
-    void needBase(QString);
-    void run();
+    void siNeedBase(QString);
+    void siStart();
+    void siPause();
+    void siStop();
 };
 
 #endif // DIALOG_H
