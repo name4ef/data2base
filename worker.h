@@ -36,6 +36,7 @@ public slots:
     void slStart();
     void slPause();
     void slStop();
+    void slDisconnecting();
 };
 
 #endif // WORKER_H

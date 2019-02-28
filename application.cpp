@@ -14,10 +14,13 @@ Application::Application(int &argc, char **&argv, const QString filename) :
             qWarning() << "can't create config file: " + configPath;
         }
         QTextStream stream(&file);
-        stream << "hostname = localhost" << endl
+        stream << "# type of dbms: pgsql, mysql" << endl
+               << "type = pgsql" << endl
+               << "hostname = localhost" << endl
                << "database = test1" << endl
                << "username = postgres" << endl
                << "password = toor" << endl
+               << endl
                << "delay = 10" << endl;
         file.close();
         if (stream.status() != QTextStream::Ok) {

@@ -25,6 +25,8 @@ public:
 private:
    QSqlDatabase db;
    QString table;
+   QString f; // float definition for different dbms
+   QString q; // quotes of header for different dbms
 };
 
 #endif // DATABASE_H

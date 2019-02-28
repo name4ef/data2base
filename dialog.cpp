@@ -32,6 +32,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(this, SIGNAL(siStart()), worker, SLOT(slStart()));
     connect(this, SIGNAL(siPause()), worker, SLOT(slPause()));
     connect(this, SIGNAL(siStop()), worker, SLOT(slStop()));
+    connect(this, SIGNAL(siDisconnecting()), worker, SLOT(slDisconnecting()));
 
     connect(ui->startPauseButton, SIGNAL(clicked()), this, SLOT(_slStart()));
     connect(ui->browseButton, SIGNAL(clicked()), this, SLOT(_slBrowse()));
@@ -47,6 +48,7 @@ Dialog::Dialog(QWidget *parent) :
 Dialog::~Dialog()
 {
     emit siPause();
+    emit siDisconnecting();
     thread->quit();
     qDebug() << "waiting thread";
     thread->wait();

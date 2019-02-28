@@ -67,3 +67,10 @@ void Worker::slStop()
     run = false;
     emit siReset();
 }
+
+void Worker::slDisconnecting()
+{
+    if (base->disconnect()) {
+        qDebug() << "disconnected";
+    }
+}

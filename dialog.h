@@ -57,6 +57,7 @@ signals:
     void siStart();
     void siPause();
     void siStop();
+    void siDisconnecting();
 };
 
 #endif // DIALOG_H

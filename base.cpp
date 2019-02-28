@@ -4,11 +4,24 @@ bool Base::connect()
 {
     Config* conf = Application::App()->config();
 
-    db = QSqlDatabase::addDatabase("QPSQL");
+    if (conf->get("type") == "pgsql") {
+        db = QSqlDatabase::addDatabase("QPSQL");
+        f = " FLOAT";
+        q = "\"";
+    } else if (conf->get("type") == "mysql") {
+        db = QSqlDatabase::addDatabase("QMYSQL");
+        f = " FLOAT(10,3)";
+        q = "`";
+    } else {
+        qWarning() << "Error of DBMS type";
+        return false;
+    }
+
     db.setHostName(conf->get("hostname"));
     db.setDatabaseName(conf->get("database"));
     db.setUserName(conf->get("username"));
     db.setPassword(conf->get("password"));
+
     if (!db.open()) {
         qDebug() << db.lastError();
         return false;
@@ -52,7 +65,7 @@ bool Base::prepareBase(QString name, QStringList headers)
 
         QString schema = "(";
         for(int i = 0; i < headers.count(); i++) {
-           schema += headers[i] + " FLOAT";
+           schema += q + headers[i] + q + f;
            if (i != headers.count()-1) {
                schema += ", ";
            }
