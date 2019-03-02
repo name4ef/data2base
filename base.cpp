@@ -8,9 +8,9 @@ bool Base::connect()
         db = QSqlDatabase::addDatabase("QPSQL");
         f = " FLOAT";
         q = "\"";
-    } else if (conf->get("type") == "mysql") {
-        db = QSqlDatabase::addDatabase("QMYSQL");
-        f = " FLOAT(10,3)";
+    } else if (conf->get("type") == "mariadb") {
+        db = QSqlDatabase::addDatabase("QMYSQL"); // under Windows normal work with mariadb-5.5.63
+        f = " FLOAT(13,3)";
         q = "`";
     } else {
         qWarning() << "Error of DBMS type";

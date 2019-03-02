@@ -14,7 +14,7 @@ Application::Application(int &argc, char **&argv, const QString filename) :
             qWarning() << "can't create config file: " + configPath;
         }
         QTextStream stream(&file);
-        stream << "# type of dbms: pgsql, mysql" << endl
+        stream << "# type of dbms: pgsql, mariadb" << endl
                << "type = pgsql" << endl
                << "hostname = localhost" << endl
                << "database = test1" << endl
