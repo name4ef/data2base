@@ -65,7 +65,11 @@ bool Base::prepareBase(QString name, QStringList headers)
 
         QString schema = "(";
         for(int i = 0; i < headers.count(); i++) {
-           schema += q + headers[i] + q + f;
+           if (i == 0) {
+               schema += q + headers[i] + q + f + " PRIMARY KEY";
+           } else {
+               schema += q + headers[i] + q + f;
+           }
            if (i != headers.count()-1) {
                schema += ", ";
            }
